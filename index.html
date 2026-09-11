@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prayer Request</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&amp;family=Libre+Franklin:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    /* =========================================================
+       PRAYER REQUEST PAGE — CSS STYLES
+       Copy this complete section into a notepad if needed.
+       ========================================================= */
+
+    :root {
+      --ivory: #fbf7ed;
+      --ivory-deep: #f2eadb;
+      --ink: #344238;
+      --sage: #a9bca9;
+      --sage-deep: #58725e;
+      --lavender: #d9d0df;
+      --lavender-deep: #75677e;
+      --gold: #c69b52;
+      --gold-soft: #f1e0b7;
+      --white: #fffdf8;
+      --shadow: 0 18px 45px rgba(70, 78, 61, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: calc(100 * min(var(--vh, 1vh), 1vh));
+      color: var(--ink);
+      font-family: "Libre Franklin", sans-serif;
+    }
+
+    .prayer-page {
+      position: relative;
+      isolation: isolate;
+      overflow-x: hidden;
+      overflow-y: visible;
+    }
+
+    .prayer-page::before,
+    .prayer-page::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      border-radius: 999px;
+      pointer-events: none;
+    }
+
+    .prayer-page::before {
+      width: 34rem;
+      height: 34rem;
+      top: -14rem;
+      right: -12rem;
+      background: radial-gradient(circle, rgba(241, 224, 183, 0.86) 0%, rgba(241, 224, 183, 0) 70%);
+    }
+
+    .prayer-page::after {
+      width: 27rem;
+      height: 27rem;
+      bottom: 7rem;
+      left: -15rem;
+      background: radial-gradient(circle, rgba(217, 208, 223, 0.55) 0%, rgba(217, 208, 223, 0) 70%);
+    }
+
+    .display-font {
+      font-family: "Fraunces", serif;
+    }
+
+    .site-shell {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .site-header {
+      padding: 1.35rem 0;
+    }
+
+    .brand-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      color: var(--sage-deep);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .brand-logo {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+      flex: 0 0 auto;
+    }
+
+    .brand-sprig {
+      width: 1.9rem;
+      height: 1.9rem;
+      border: 1px solid rgba(88, 114, 94, 0.36);
+      border-radius: 50% 50% 50% 12%;
+      transform: rotate(-35deg);
+      position: relative;
+    }
+
+    .brand-sprig::before,
+    .brand-sprig::after {
+      content: "";
+      position: absolute;
+      background: var(--sage);
+      border-radius: 100% 0 100% 0;
+    }
+
+    .brand-sprig::before {
+      width: 0.52rem;
+      height: 0.82rem;
+      top: 0.22rem;
+      left: 0.68rem;
+      transform: rotate(22deg);
+    }
+
+    .brand-sprig::after {
+      width: 0.42rem;
+      height: 0.68rem;
+      bottom: 0.24rem;
+      left: 0.42rem;
+      transform: rotate(-25deg);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.22fr) minmax(220px, 0.78fr);
+      gap: 2rem;
+      align-items: center;
+      padding: 3rem 0 3.5rem;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      margin-bottom: 1rem;
+      color: var(--sage-deep);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 2.1rem;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    .hero-copy {
+      max-width: 40rem;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #516057;
+    }
+
+    .simple-hero-art {
+      position: relative;
+      min-height: 330px;
+      border-radius: 2.25rem;
+      overflow: hidden;
+      background: #f3f0e7;
+      border: 1px solid rgba(88, 114, 94, 0.12);
+      box-shadow: var(--shadow);
+      isolation: isolate;
+    }
+
+    .simple-hero-art::before,
+    .simple-hero-art::after {
+      content: "";
+      position: absolute;
+      width: 150px;
+      height: 230px;
+      border: 2px solid rgba(88, 114, 94, 0.16);
+      border-left: 0;
+      border-bottom: 0;
+      border-radius: 100% 0 0 0;
+      transform: rotate(-28deg);
+      z-index: -1;
+    }
+
+    .simple-hero-art::before {
+      left: -35px;
+      bottom: -45px;
+    }
+
+    .simple-hero-art::after {
+      right: -30px;
+      top: -55px;
+      transform: rotate(152deg);
+    }
+
+    .leaf-decoration {
+      position: absolute;
+      width: 170px;
+      height: 260px;
+      opacity: .75;
+      pointer-events: none;
+    }
+
+    .leaf-decoration.left { left: -18px; bottom: -28px; transform: rotate(-18deg); }
+    .leaf-decoration.right { right: -18px; top: -28px; transform: rotate(162deg); }
+
+    .leaf-decoration::before {
+      content: "";
+      position: absolute;
+      left: 82px;
+      top: 18px;
+      width: 2px;
+      height: 225px;
+      background: rgba(88, 114, 94, .32);
+      transform: rotate(-13deg);
+      transform-origin: bottom;
+    }
+
+    .leaf-decoration span {
+      position: absolute;
+      width: 30px;
+      height: 54px;
+      border-radius: 100% 0 100% 0;
+      background: rgba(88, 114, 94, .22);
+    }
+
+    .leaf-decoration span:nth-child(1) { left: 45px; top: 105px; transform: rotate(-34deg); }
+    .leaf-decoration span:nth-child(2) { left: 78px; top: 68px; transform: rotate(28deg); }
+    .leaf-decoration span:nth-child(3) { left: 28px; top: 150px; transform: rotate(-40deg); }
+    .leaf-decoration span:nth-child(4) { left: 70px; top: 123px; transform: rotate(31deg); }
+
+    .hero-note {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .hero-note-inner {
+      max-width: 22rem;
+      padding: 1.5rem 1.75rem;
+      border-radius: 1.5rem;
+      background: rgba(255, 253, 248, .78);
+      border: 1px solid rgba(88, 114, 94, .1);
+      backdrop-filter: blur(4px);
+    }
+
+    .hero-note-inner strong {
+      display: block;
+      color: #344238;
+      font-family: Georgia, serif;
+      font-size: 1.45rem;
+      line-height: 1.35;
+      font-weight: 600;
+    }
+
+    .hero-note-inner span {
+      display: block;
+      margin-top: .65rem;
+      color: #5a675e;
+      font-size: .9rem;
+      line-height: 1.6;
+    }
+
+    .leaf-stem {
+      position: absolute;
+      z-index: 2;
+      bottom: 15px;
+      width: 2px;
+      height: 119px;
+      background: #55735d;
+      transform-origin: bottom;
+    }
+
+    .leaf-stem.left {
+      left: 22%;
+      transform: rotate(-25deg);
+    }
+
+    .leaf-stem.right {
+      right: 20%;
+      transform: rotate(27deg);
+    }
+
+    .leaf-stem span {
+      position: absolute;
+      width: 19px;
+      height: 34px;
+      background: #69866d;
+      border-radius: 100% 0 100% 0;
+    }
+
+    .leaf-stem span:nth-child(1) { top: 17px; left: -17px; transform: rotate(-19deg); }
+    .leaf-stem span:nth-child(2) { top: 42px; left: 1px; transform: rotate(32deg); }
+    .leaf-stem span:nth-child(3) { top: 69px; left: -18px; transform: rotate(-28deg); }
+
+    .prayer-form-card,
+    .prayer-card {
+      border: 1px solid rgba(117, 103, 126, 0.12);
+      box-shadow: var(--shadow);
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.55rem;
+      color: #405348;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .form-field {
+      width: 100%;
+      border: 1px solid rgba(88, 114, 94, 0.28);
+      border-radius: 0.9rem;
+      background: rgba(255, 253, 248, 0.85);
+      color: var(--ink);
+      font: inherit;
+      outline: none;
+      transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    .form-field:focus {
+      border-color: var(--sage-deep);
+      background: #fffdf8;
+      box-shadow: 0 0 0 4px rgba(169, 188, 169, 0.32);
+    }
+
+    textarea.form-field {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .action-button,
+    .clear-button,
+    .support-button {
+      transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+    }
+
+    .action-button:hover,
+    .support-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 9px 20px rgba(88, 114, 94, 0.22);
+    }
+
+    .action-button:active,
+    .support-button:active,
+    .clear-button:active {
+      transform: translateY(0);
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible {
+      outline: 3px solid rgba(198, 155, 82, 0.76);
+      outline-offset: 3px;
+    }
+
+    .status-message {
+      min-height: 1.5rem;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .prayer-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .prayer-card::before {
+      content: "“";
+      position: absolute;
+      top: -0.7rem;
+      right: 1rem;
+      color: rgba(198, 155, 82, 0.24);
+      font-family: "Fraunces", serif;
+      font-size: 6rem;
+      line-height: 1;
+    }
+
+    .prayer-text {
+      position: relative;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      line-height: 1.75;
+    }
+
+    .support-button[disabled] {
+      cursor: wait;
+      opacity: 0.65;
+    }
+
+    .fade-up {
+      animation: fadeUp 650ms ease both;
+    }
+
+    .fade-up.delay-one {
+      animation-delay: 120ms;
+    }
+
+    .fade-up.delay-two {
+      animation-delay: 220ms;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 720px) {
+      .site-shell {
+        padding: 0 1rem;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+        padding: 2.2rem 0 2.5rem;
+      }
+
+      .sunrise-art {
+        min-height: 205px;
+      }
+
+      .hero-title {
+        font-size: clamp(2.5rem, 12vw, 4rem) !important;
+      }
+
+      .form-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .form-actions button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+ </head>
+ <body data-template-id="__page-root" class="prayer-page" style="background: linear-gradient(145deg, rgb(251, 247, 237) 0%, rgb(248, 244, 233) 48%, rgb(241, 240, 233) 100%);">
+  <header class="site-header" aria-label="Prayer request page header">
+   <div class="site-shell">
+    <div class="brand-mark"><img class="brand-logo" src="/logo.png" alt="Prayer Request logo"> <span data-template-id="brand-name" class="canva-text" style="color: rgb(88, 114, 94); font-weight: 700; font-style: normal; font-size: 16px;">Prayer Request</span>
+    </div>
+   </div>
+  </header>
+  <main>
+   <section class="site-shell hero-grid" aria-labelledby="hero-heading">
+    <div class="fade-up">
+     <p data-template-id="hero-eyebrow" class="canva-text eyebrow" style="color: rgb(88, 114, 94); font-weight: 700; font-style: normal; font-size: 12px; letter-spacing: 0.08rem;">A gentle place to be held in prayer</p>
+     <h1 id="hero-heading" data-template-id="hero-title" class="canva-text display-font hero-title mb-5" style="color: rgb(52, 66, 56); font-weight: 600; font-style: normal; font-size: 32px;">God Hears Your Prayers</h1>
+     <p data-template-id="hero-copy" class="canva-text hero-copy" style="color: rgb(81, 96, 87); font-weight: 400; font-style: normal; font-size: 17px; line-height: 1.8;">Whatever is on your heart, you are welcome here. Share a prayer request and let this small community hold hope with you.</p>
+    </div>
+    <div class="simple-hero-art fade-up delay-one" aria-label="Simple peaceful cream and sage decorative artwork">
+     <div class="leaf-decoration left" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+     <div class="leaf-decoration right" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+     <div class="hero-note">
+      <div class="hero-note-inner">
+       <strong>Because of your faith, it will happen.</strong>
+       <span>A quiet place to share what is on your heart.</span>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section class="site-shell pb-12" aria-labelledby="form-heading">
+    <div data-template-id="prayer-form-card" class="canva-card prayer-form-card rounded-[1.75rem] p-6 sm:p-8 fade-up delay-two" style="background: rgb(255, 253, 248);">
+     <div class="mb-7">
+      <h2 id="form-heading" data-template-id="form-title" class="canva-text display-font mb-2" style="color: rgb(52, 66, 56); font-weight: 600; font-style: normal; font-size: 24px;">Share what is on your heart</h2>
+      <p data-template-id="form-description" class="canva-text max-w-2xl leading-7" style="color: rgb(90, 103, 94); font-weight: 400; font-style: normal; font-size: 16px; line-height: 1.7;">Your words will be shared exactly as you write them. A name is optional; your prayer matters either way.</p>
+     </div>
+     <form id="prayer-form" novalidate="">
+      <div class="mb-5"><label data-template-id="prayer-label" class="canva-text form-label" for="prayer-text" style="color: rgb(64, 83, 72); font-weight: 700; font-style: normal; font-size: 14px;">Your prayer request</label> <textarea id="prayer-text" class="form-field p-4" name="prayer_text" required="" maxlength="2000" aria-describedby="prayer-help"></textarea>
+       <p id="prayer-help" data-template-id="prayer-help-text" class="canva-text mt-2 text-sm leading-6" style="color: rgb(105, 117, 110); font-weight: 400; font-style: normal; font-size: 14px; line-height: 1.5;">Share as much or as little as feels comfortable.</p>
+      </div>
+      <div class="mb-6 max-w-xl"><label data-template-id="name-label" class="canva-text form-label" for="prayer-name" style="color: rgb(64, 83, 72); font-weight: 700; font-style: normal; font-size: 14px;">Your name (optional)</label> <input id="prayer-name" class="form-field px-4 py-3" name="name" type="text" maxlength="80">
+      </div>
+      <div class="form-actions flex flex-wrap items-center gap-3"><button id="submit-button" data-template-id="submit-button" class="canva-button action-button inline-flex items-center rounded-xl px-5 py-3 font-semibold" type="submit" style="background: rgb(88, 114, 94); color: rgb(255, 253, 248);"> <span data-template-id="submit-button-text" class="canva-text" style="color: rgb(255, 253, 248); font-weight: 700; font-style: normal; font-size: 16px;">Add my prayer</span> </button> <button id="clear-button" data-template-id="clear-button" class="canva-button clear-button inline-flex items-center rounded-xl px-5 py-3 font-semibold" type="button" style="background: rgb(236, 231, 221); color: rgb(76, 93, 81);"> <span data-template-id="clear-button-text" class="canva-text" style="color: rgb(76, 93, 81); font-weight: 600; font-style: normal; font-size: 16px;">Clear form</span> </button>
+      </div>
+      <div class="mt-4" aria-live="polite" aria-atomic="true">
+       <p id="success-message" data-template-id="success-message" class="canva-text status-message hidden" style="color: rgb(62, 109, 76); font-weight: 600; font-style: normal; font-size: 14px;">Thank you for sharing. Your prayer has been added with care.</p>
+       <p id="form-status" class="status-message text-[#9a4e4b]" role="status"></p>
+      </div>
+     </form>
+    </div>
+   </section>
+   <section class="site-shell pb-16" aria-labelledby="list-heading">
+    <div class="mb-7 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+     <div>
+      <p data-template-id="list-eyebrow" class="canva-text eyebrow" style="color: rgb(117, 103, 126); font-weight: 700; font-style: normal; font-size: 12px; letter-spacing: 0.08rem;">Shared with care</p>
+      <h2 id="list-heading" data-template-id="list-title" class="canva-text display-font" style="color: rgb(52, 66, 56); font-weight: 600; font-style: normal; font-size: 24px;">Prayers from the community</h2>
+     </div>
+     <p data-template-id="list-description" class="canva-text max-w-md leading-6" style="color: rgb(90, 103, 94); font-weight: 400; font-style: normal; font-size: 14px; line-height: 1.6;">Pause with a request and offer a quiet sign of support.</p>
+    </div>
+    <div id="empty-state" data-template-id="empty-state" class="canva-panel rounded-[1.5rem] border border-dashed p-8 text-center" style="background: rgb(245, 240, 230);">
+     <h3 data-template-id="empty-title" class="canva-text display-font mb-2" style="color: rgb(78, 98, 84); font-weight: 600; font-style: normal; font-size: 19px;">Be the first to share</h3>
+     <p data-template-id="empty-copy" class="canva-text mx-auto max-w-xl leading-7" style="color: rgb(98, 112, 104); font-weight: 400; font-style: normal; font-size: 16px; line-height: 1.7;">This is a quiet space waiting for its first prayer. If something is weighing on your heart, you are welcome to begin.</p>
+    </div>
+    <div id="prayer-list" class="grid grid-cols-1 gap-5 lg:grid-cols-2" aria-live="polite"></div>
+   </section>
+  </main>
+  <footer class="site-shell pb-8 text-center">
+   <p data-template-id="footer-text" class="canva-text text-sm" style="color: rgb(117, 103, 126); font-weight: 400; font-style: italic; font-size: 14px;">May peace meet you wherever you are.</p>
+  </footer>
+  <template id="prayer-card-template">
+   <article data-template-id="prayer-card" class="canva-card prayer-card rounded-[1.5rem] p-6">
+    <p class="prayer-text text-[1rem]"></p>
+    <div class="mt-6 flex flex-wrap items-end justify-between gap-4 border-t border-[#dfe4d8] pt-4">
+     <div>
+      <p class="prayer-author font-semibold"></p>
+      <p class="prayer-date mt-1 text-sm"></p>
+     </div><button data-template-id="support-button" class="canva-button support-button inline-flex items-center gap-2 rounded-xl px-4 py-2.5 font-semibold" type="button"> <span data-template-id="support-button-text" class="canva-text"></span> <span class="support-count text-sm" aria-live="polite"></span> </button>
+    </div>
+   </article>
+  </template>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/supabase-config.js"></script>
+  <script>
+    (() => {
+      const form = document.getElementById("prayer-form");
+      const prayerInput = document.getElementById("prayer-text");
+      const nameInput = document.getElementById("prayer-name");
+      const submitButton = document.getElementById("submit-button");
+      const clearButton = document.getElementById("clear-button");
+      const prayerList = document.getElementById("prayer-list");
+      const emptyState = document.getElementById("empty-state");
+      const successMessage = document.getElementById("success-message");
+      const formStatus = document.getElementById("form-status");
+      const cardTemplate = document.getElementById("prayer-card-template");
+
+      const config = window.PRAYER_CONFIG || {};
+      const supabaseUrl = config.url || "";
+      const supabaseAnonKey = config.anonKey || "";
+      const supabaseClient = (supabaseUrl && supabaseAnonKey)
+        ? window.supabase.createClient(supabaseUrl, supabaseAnonKey)
+        : null;
+
+      let currentPrayers = [];
+      let isReady = false;
+
+      function formatDate(isoDate) {
+        const date = new Date(isoDate);
+        if (Number.isNaN(date.getTime())) return "";
+        return new Intl.DateTimeFormat("en-PH", {
+          day: "numeric", month: "long", year: "numeric"
+        }).format(date);
+      }
+
+      function setStatus(message) { formStatus.textContent = message; }
+
+      function setSubmitting(isSubmitting) {
+        submitButton.disabled = isSubmitting;
+        clearButton.disabled = isSubmitting;
+        submitButton.style.opacity = isSubmitting ? "0.68" : "1";
+        submitButton.style.cursor = isSubmitting ? "wait" : "pointer";
+      }
+
+      function createPrayerCard(prayer) {
+        const fragment = cardTemplate.content.cloneNode(true);
+        const card = fragment.querySelector("article");
+        card.dataset.recordId = prayer.id;
+
+        card.querySelector(".prayer-text").textContent = prayer.prayer_text || "";
+        card.querySelector(".prayer-author").textContent =
+          prayer.name && prayer.name.trim() ? prayer.name.trim() : "A friend";
+        card.querySelector(".prayer-date").textContent =
+          prayer.submitted_at ? "Shared " + formatDate(prayer.submitted_at) : "";
+
+        const supportButton = card.querySelector("button");
+        const supportCount = card.querySelector(".support-count");
+        supportCount.textContent = String(Number(prayer.support_count) || 0);
+
+        supportButton.addEventListener("click", async () => {
+          if (supportButton.disabled || !supabaseClient) return;
+          supportButton.disabled = true;
+          try {
+            const { data, error } = await supabaseClient.rpc("support_prayer", { p_id: prayer.id });
+            if (error) throw error;
+            const updated = Array.isArray(data) ? data[0] : data;
+            if (!updated) throw new Error("Support update failed");
+            const active = currentPrayers.find(p => p.id === prayer.id);
+            if (active) active.support_count = updated.support_count;
+            supportCount.textContent = String(updated.support_count);
+          } catch (error) {
+            console.error(error);
+            setStatus("We could not save your support just now. Please try again.");
+            supportButton.disabled = false;
+          }
+        });
+
+        return fragment;
+      }
+
+      function renderPrayers(prayers) {
+        currentPrayers = [...prayers].sort(
+          (a, b) => new Date(b.submitted_at) - new Date(a.submitted_at)
+        );
+        emptyState.classList.toggle("hidden", currentPrayers.length > 0);
+        prayerList.innerHTML = "";
+        currentPrayers.forEach(prayer => prayerList.appendChild(createPrayerCard(prayer)));
+      }
+
+      async function loadPrayers() {
+        if (!supabaseClient) {
+          setStatus("The website database is not configured yet. Open supabase-config.js and add your Supabase URL and anon key.");
+          return;
+        }
+        try {
+          const { data, error } = await supabaseClient
+            .from("prayers")
+            .select("id, prayer_text, name, submitted_at, support_count")
+            .order("submitted_at", { ascending: false })
+            .order("id", { ascending: false });
+          if (error) throw error;
+          renderPrayers(data || []);
+          isReady = true;
+        } catch (error) {
+          console.error(error);
+          setStatus("Prayer requests are unavailable right now. Please check your database setup and refresh.");
+        }
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        successMessage.classList.add("hidden");
+        setStatus("");
+
+        const prayerText = prayerInput.value.trim();
+        const name = nameInput.value.trim();
+
+        if (!prayerText) {
+          setStatus("Please enter a prayer request before adding it.");
+          prayerInput.focus();
+          return;
+        }
+
+        if (!isReady || !supabaseClient) {
+          setStatus("The database is still preparing. Please try again in a moment.");
+          return;
+        }
+
+        setSubmitting(true);
+        try {
+          const { error } = await supabaseClient
+            .from("prayers")
+            .insert({ prayer_text: prayerText, name });
+          if (error) throw error;
+
+          form.reset();
+          successMessage.classList.remove("hidden");
+          prayerInput.focus();
+          await loadPrayers();
+        } catch (error) {
+          console.error(error);
+          setStatus(error.message || "We could not add your prayer right now. Please try again.");
+        } finally {
+          setSubmitting(false);
+        }
+      });
+
+      clearButton.addEventListener("click", () => {
+        form.reset();
+        successMessage.classList.add("hidden");
+        setStatus("");
+        prayerInput.focus();
+      });
+
+      loadPrayers();
+    })();
+  </script>
+
+</body></html>
