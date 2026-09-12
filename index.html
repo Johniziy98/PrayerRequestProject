@@ -405,6 +405,39 @@
       opacity: 0.65;
     }
 
+    .answered-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      margin-top: 0.55rem;
+      color: #58725e;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .answered-check input {
+      width: 1.15rem;
+      height: 1.15rem;
+      margin: 0;
+      accent-color: #58725e;
+      cursor: pointer;
+    }
+
+    .answered-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 0.55rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 999px;
+      background: #edf3ea;
+      color: #58725e;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
     .fade-up {
       animation: fadeUp 650ms ease both;
     }
@@ -425,47 +458,6 @@
       to {
         opacity: 1;
         transform: translateY(0);
-      }
-    }
-
-
-    /* Tablet / phone hardening: also handles browsers using a wider CSS viewport. */
-    @media (max-width: 1024px) {
-      html, body {
-        width: 100%;
-        max-width: 100%;
-        overflow-x: hidden;
-      }
-
-      .site-shell {
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-      }
-
-      .hero-grid {
-        width: 100%;
-        max-width: 100%;
-        grid-template-columns: minmax(0, 1fr);
-        gap: 1.5rem;
-      }
-
-      .hero-grid > * {
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-      }
-
-      .hero-copy,
-      .hero-title,
-      .eyebrow {
-        max-width: 100%;
-        overflow-wrap: anywhere;
-      }
-
-      .simple-hero-art {
-        width: 100%;
-        max-width: 100%;
       }
     }
 
@@ -736,7 +728,8 @@
      <div>
       <p class="prayer-author font-semibold"></p>
       <p class="prayer-date mt-1 text-sm"></p>
-     </div><button data-template-id="support-button" class="canva-button support-button inline-flex items-center gap-2 rounded-xl px-4 py-2.5 font-semibold" type="button"> <span data-template-id="support-button-text" class="canva-text"></span> <span class="support-count text-sm" aria-live="polite"></span> </button>
+      <div class="answered-area"></div>
+     </div><button data-template-id="support-button" class="canva-button support-button inline-flex items-center gap-2 rounded-xl px-4 py-2.5 font-semibold" type="button"> <span data-template-id="support-button-text" class="canva-text">I prayed for this</span> <span class="support-count text-sm" aria-live="polite"></span> </button>
     </div>
    </article>
   </template>
@@ -764,6 +757,32 @@
 
       let currentPrayers = [];
       let isReady = false;
+      const OWNER_TOKENS_KEY = "prayer_request_owner_tokens_v1";
+
+      function getOwnerTokens() {
+        try {
+          return JSON.parse(localStorage.getItem(OWNER_TOKENS_KEY) || "{}");
+        } catch (_) {
+          return {};
+        }
+      }
+
+      function saveOwnerToken(prayerId, token) {
+        try {
+          const tokens = getOwnerTokens();
+          tokens[String(prayerId)] = token;
+          localStorage.setItem(OWNER_TOKENS_KEY, JSON.stringify(tokens));
+        } catch (_) {}
+      }
+
+      function getOwnerToken(prayerId) {
+        return getOwnerTokens()[String(prayerId)] || "";
+      }
+
+      function makeOwnerToken() {
+        if (window.crypto && crypto.randomUUID) return crypto.randomUUID() + crypto.randomUUID();
+        return Math.random().toString(36).slice(2) + Date.now().toString(36) + Math.random().toString(36).slice(2);
+      }
 
       function formatDate(isoDate) {
         const date = new Date(isoDate);
@@ -792,6 +811,52 @@
           prayer.name && prayer.name.trim() ? prayer.name.trim() : "A friend";
         card.querySelector(".prayer-date").textContent =
           prayer.submitted_at ? "Shared " + formatDate(prayer.submitted_at) : "";
+
+        const answeredArea = card.querySelector(".answered-area");
+        const ownerToken = getOwnerToken(prayer.id);
+
+        if (prayer.answered) {
+          const label = document.createElement("label");
+          label.className = "answered-check";
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.checked = true;
+          checkbox.disabled = true;
+          checkbox.setAttribute("aria-label", "Answered prayer");
+          label.appendChild(checkbox);
+          answeredArea.appendChild(label);
+        } else if (ownerToken) {
+          const label = document.createElement("label");
+          label.className = "answered-check";
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.setAttribute("aria-label", "Answered prayer");
+          label.appendChild(checkbox);
+          answeredArea.appendChild(label);
+
+          checkbox.addEventListener("change", async () => {
+            if (!checkbox.checked || !supabaseClient) return;
+            checkbox.disabled = true;
+            try {
+              const { data, error } = await supabaseClient.rpc("mark_prayer_answered", {
+                p_id: prayer.id,
+                p_owner_token: ownerToken
+              });
+              if (error) throw error;
+              const updated = Array.isArray(data) ? data[0] : data;
+              if (!updated || !updated.answered) throw new Error("Could not mark prayer as answered");
+              const active = currentPrayers.find(p => p.id === prayer.id);
+              if (active) active.answered = true;
+              checkbox.checked = true;
+              checkbox.disabled = true;
+            } catch (error) {
+              console.error(error);
+              checkbox.checked = false;
+              checkbox.disabled = false;
+              setStatus("We could not save that update just now. Please try again.");
+            }
+          });
+        }
 
         const supportButton = card.querySelector("button");
         const supportCount = card.querySelector(".support-count");
@@ -835,7 +900,7 @@
         try {
           const { data, error } = await supabaseClient
             .from("prayers")
-            .select("id, prayer_text, name, submitted_at, support_count")
+            .select("id, prayer_text, name, submitted_at, support_count, answered")
             .order("submitted_at", { ascending: false })
             .order("id", { ascending: false });
           if (error) throw error;
@@ -868,10 +933,14 @@
 
         setSubmitting(true);
         try {
-          const { error } = await supabaseClient
+          const ownerToken = makeOwnerToken();
+          const { data: inserted, error } = await supabaseClient
             .from("prayers")
-            .insert({ prayer_text: prayerText, name });
+            .insert({ prayer_text: prayerText, name, owner_token: ownerToken })
+            .select("id")
+            .single();
           if (error) throw error;
+          saveOwnerToken(inserted.id, ownerToken);
 
           form.reset();
           successMessage.classList.remove("hidden");
